@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer, get, HttpResponse, HttpRequest};
+use actix_web::{web, App, HttpServer, get, HttpResponse, HttpRequest, guard};
 
 mod db_config;
 mod data_structures;
@@ -39,8 +39,12 @@ async fn main() -> std::io::Result<()> {
         let app_data = application_data.clone();
         App::new()
             .app_data(app_data)
-            .route("/status", web::get().to(get_and_update_app_state_data))
-            .route("/", web::get().to(greetings))
+            .service(
+                web::scope("/status")
+                    .guard(guard::Header("Claudio", "Gilson"))
+                    .route("/status", web::to(get_and_update_app_state_data))
+            )
+            .route("/", web::to(greetings))
     })
         .bind(("127.0.0.1", 8080))?
         .run()
