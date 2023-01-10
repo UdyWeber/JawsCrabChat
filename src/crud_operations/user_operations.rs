@@ -5,7 +5,7 @@ use crate::models::NewUser;
 use crate::models::User;
 use crate::schema::users::dsl::*;
 
-pub fn add_user(user: &NewUser, connection: &mut PgConnection){
+pub fn add_user_to_database(user: &NewUser, connection: &mut PgConnection){
     diesel::insert_into(users)
     .values(user)
     .execute(connection)

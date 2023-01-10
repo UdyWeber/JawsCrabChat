@@ -1,6 +1,7 @@
 use crate::schema::users;
+use serde::Deserialize;
 
-#[derive(Insertable)]
+#[derive(Insertable, Deserialize)]
 #[table_name = "users"]
 pub struct NewUser<'a> {
     pub name: &'a str,
@@ -11,12 +12,11 @@ impl<'a> NewUser<'a>{
     pub fn new(
         name: &'a str,
         email: &'a str,
-        is_removed: bool,
     ) -> NewUser<'a>{
         NewUser {
             name: name,
             email: email,
-            removed: is_removed,
+            removed: false,
         }
     }
 }

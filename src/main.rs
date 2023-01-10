@@ -1,7 +1,4 @@
-use std::sync::Mutex;
-use actix_web::{web, App, HttpServer, get, HttpResponse, HttpRequest, guard};
-use actix_web::dev::Service;
-use actix_web::http::header::HeaderValue;
+use actix_web::{web, App, HttpServer, HttpRequest, guard};
 use actix_web::middleware::Logger;
 
 #[macro_use]
@@ -14,12 +11,11 @@ mod schema;
 mod crud_operations;
 mod rest_operations;
 
-use db_config::establish_connection;
 use data_structures::app_state::{AppState, get_and_update_app_state_data};
 use crate::rest_operations::user::add_user_to_app;
 
 async fn greetings(request_data: HttpRequest, data: web::Data<AppState>) -> String {
-    let mut threat_message = String::new();
+    let threat_message: String;
 
     if let Some(real_ip_addrs) = request_data.connection_info().realip_remote_addr(){
         threat_message = format!(
@@ -43,12 +39,8 @@ async fn greetings(request_data: HttpRequest, data: web::Data<AppState>) -> Stri
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let mut db_connection = establish_connection();
-
-    let mut app_state = AppState::default();
-    app_state.db_connection = Mutex::new(Some(db_connection));
-
-    let mut application_data = web::Data::new(app_state);
+    let app_state = AppState::new();
+    let application_data = web::Data::new(app_state);
 
     HttpServer::new(move || {
         let app_data = application_data.clone();
@@ -67,7 +59,7 @@ async fn main() -> std::io::Result<()> {
                     .route("", web::post().to(add_user_to_app))
             )
             .route("/", web::to(greetings))
-    }).workers(4)
+    })
         .bind(("127.0.0.1", 8080))?
         .run()
         .await

@@ -1,24 +1,21 @@
 use std::sync::Mutex;
 use actix_web::web;
-use diesel::PgConnection;
 
-pub struct AppState{
+pub struct AppState {
     pub app_name: String,
     pub request_counter: Mutex<i32>,
-    pub db_connection: Mutex<Option<PgConnection>>
 }
 
-impl Default for AppState{
-    fn default() -> Self {
+impl AppState{
+    pub fn new() -> Self {
         AppState{
             app_name: "JawsCrabChat".into(),
             request_counter: Mutex::new(0),
-            db_connection: Mutex::new(None),
         }
     }
 }
 
-pub async fn get_and_update_app_state_data(app_data: web::Data<AppState>) -> String {
+pub async fn get_and_update_app_state_data<'s>(app_data: web::Data<AppState>) -> String {
     let mut request_counter = app_data.request_counter.lock().unwrap();
     *request_counter += 1;
 
