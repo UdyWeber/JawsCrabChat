@@ -1,3 +1,10 @@
+#[macro_use]
+extern crate diesel;
+extern crate dotenvy;
+
+
+mod db_config;
+
 fn main() {
-    println!("Hello, world!");
+    let connection = db_config::establish_connection();
 }
