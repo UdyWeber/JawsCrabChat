@@ -1,4 +1,7 @@
 use actix_web::{web, App, HttpServer, get, HttpResponse, HttpRequest, guard};
+use actix_web::dev::Service;
+use actix_web::http::header::HeaderValue;
+use actix_web::middleware::Logger;
 
 mod db_config;
 mod data_structures;
@@ -38,11 +41,13 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         let app_data = application_data.clone();
         App::new()
+            .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agent}i"))
             .app_data(app_data)
             .service(
                 web::scope("/status")
-                    .guard(guard::Header("Claudio", "Gilson"))
-                    .route("/status", web::to(get_and_update_app_state_data))
+                    .guard(guard::Header("StatusTok", "Admin"))
+                    .route("", web::to(get_and_update_app_state_data))
             )
             .route("/", web::to(greetings))
     })
