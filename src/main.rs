@@ -62,4 +62,10 @@ async fn main() -> std::io::Result<()> {
         .bind(("127.0.0.1", 8080))?
         .run()
         .await
+
+    // TODO: Create Token System Middleware
+    // TODO: Create Alembic Migrations and Schema
+    // TODO: Start Chat Connections
+    // TODO: Create Message System
+    // TODO: Maybe Implement Graphql For Some Interface With Subscription
 }
