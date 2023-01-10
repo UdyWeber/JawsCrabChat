@@ -20,8 +20,6 @@ pub async fn add_user_to_app(
         &rest_user_data.email
     );
 
-    println!("Chegou aqui mane");
-
     add_user_to_database(&new_user, connection);
 
     format!(

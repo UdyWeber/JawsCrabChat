@@ -55,7 +55,6 @@ async fn main() -> std::io::Result<()> {
             )
             .service(
                 web::scope("/add_user")
-                    .guard(guard::Header("PermissionTok", "AddUser"))
                     .route("", web::post().to(add_user_to_app))
             )
             .route("/", web::to(greetings))
