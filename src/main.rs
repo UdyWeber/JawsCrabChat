@@ -1,3 +1,4 @@
+use std::sync::Mutex;
 use actix_web::{web, App, HttpServer, get, HttpResponse, HttpRequest, guard};
 use actix_web::dev::Service;
 use actix_web::http::header::HeaderValue;
@@ -42,9 +43,12 @@ async fn greetings(request_data: HttpRequest, data: web::Data<AppState>) -> Stri
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    let db_connection = establish_connection();
+    let mut db_connection = establish_connection();
 
-    let application_data = web::Data::new(AppState::default());
+    let mut app_state = AppState::default();
+    app_state.db_connection = Mutex::new(Some(db_connection));
+
+    let mut application_data = web::Data::new(app_state);
 
     HttpServer::new(move || {
         let app_data = application_data.clone();

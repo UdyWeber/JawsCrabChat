@@ -1,16 +1,19 @@
 use std::sync::Mutex;
 use actix_web::web;
+use diesel::PgConnection;
 
 pub struct AppState{
     pub app_name: String,
     pub request_counter: Mutex<i32>,
+    pub db_connection: Mutex<Option<PgConnection>>
 }
 
 impl Default for AppState{
     fn default() -> Self {
         AppState{
             app_name: "JawsCrabChat".into(),
-            request_counter: Mutex::new(0)
+            request_counter: Mutex::new(0),
+            db_connection: Mutex::new(None),
         }
     }
 }
